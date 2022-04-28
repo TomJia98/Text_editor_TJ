@@ -1,16 +1,25 @@
-const installBtn = document.getElementById("buttonInstall");
+const butInstall = document.getElementById("buttonInstall");
 
 window.addEventListener("beforeinstallprompt", (event) => {
-  event.preventDefault();
-  installBtn.style.visibility = "visible";
+  window.deferredPrompt = event;
+  butInstall.classList.toggle("hidden", false);
+});
 
-  installBtn.addEventListener("click", () => {
-    event.prompt();
-    installBtn.setAttribute("disabled", true);
-    installBtn.textContent = "Installed!";
-  });
+butInstall.addEventListener("click", async () => {
+  const promptEvent = window.deferredPrompt;
+
+  if (!promptEvent) {
+    return;
+  }
+
+  promptEvent.prompt();
+
+  window.deferredPrompt = null;
+
+  butInstall.classList.toggle("hidden", true);
 });
 
 window.addEventListener("appinstalled", (event) => {
-  console.log("👍", "appinstalled", event);
+  window.deferredPrompt = null;
+  butInstall.textContent = "installed";
 });
